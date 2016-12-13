@@ -35,3 +35,29 @@ def file2matrix(filename):
 		classLabelVector.append((listfromline[-1]))
 		index+=1
 	return returnMat,classLabelVector
+
+def autoNorm(dataset):
+	minVal=dataset.min(0)
+	maxVal=dataset.max(0)
+	returnMat=zeros(shape(dataset))
+	ranges=maxVal-minVal
+	m=dataset.shape[0]
+	minMat=tile(minVal,(m,1))
+	maxMat=tile(maxVal,(m,1))
+	returnMat=(dataset-minMat)/(maxMat-minMat)
+	return returnMat,ranges,minVal
+
+def datingClassTest():
+	dataMat,classLabels=file2matrix('/Users/user/Desktop/machinelearninginaction/Ch02/datingTestSet2.txt')
+	print classLabels
+	normMat,ranges,minVals=autoNorm(dataMat)
+	size=normMat.shape[0]
+	flag=0.1
+	partSize=int(size*flag)
+	errorCount=0.0
+	for i in range(partSize):
+		classifierResult=kNNTest(normMat[i,:],normMat[partSize:size,:],classLabels,3)
+		print 'the classifier came back with: %d, the real answer is: %d'\
+			%(int(classifierResult),int(classLabels[i]))
+		if classifierResult!=classLabels[i]:errorCount+=1.0
+	print "the total error rate is: %f" %(errorCount/float(partSize))
