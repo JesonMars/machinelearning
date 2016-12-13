@@ -61,3 +61,16 @@ def datingClassTest():
 			%(int(classifierResult),int(classLabels[i]))
 		if classifierResult!=classLabels[i]:errorCount+=1.0
 	print "the total error rate is: %f" %(errorCount/float(partSize))
+
+def classifyPerson():
+	resultList=['not at all','in small doses','in large doses']
+	percentTats=float(raw_input('percentage of time spent playing video games?'))
+	ffMiles=float(raw_input('frequent flier miles earned per year?'))
+	iceCream=float(raw_input('liters of ice cream consumed per year?'))
+	datingDataMat,datingLabels=file2matrix('../traningdata/Ch02/datingTestSet2.txt')
+	normMat,ranges,minVal=autoNorm(datingDataMat)
+	inArray=array([ffMiles,percentTats,iceCream])
+	classifierPerson=kNNTest((inArray-minVal)/ranges,normMat,datingLabels,3)
+	print 'you will probably like this person:',resultList[int(classifierPerson)-1]
+	
+	
