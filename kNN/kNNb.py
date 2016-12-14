@@ -2,6 +2,7 @@
 #!/usr/bin/python
 
 from numpy import *
+from os import listdir
 import operator
 
 def kNNTest(intX,dataset,labels,k):
@@ -73,4 +74,43 @@ def classifyPerson():
 	classifierPerson=kNNTest((inArray-minVal)/ranges,normMat,datingLabels,3)
 	print 'you will probably like this person:',resultList[int(classifierPerson)-1]
 	
+def img2vector(filename):
+	returnVect=zeros((1,1024))
+	fo=open(filename)
+	for j in range(32):
+		f=fo.readline()
+		for i in range(32):
+			returnVect[0,32*j+i]=int(f[i])
+	return returnVect
+
+def handwritingClassTest(filepath):
+	trianingFile='%s/trainingDigits'%(filepath)
+	exampleFiles=listdir(trianingFile)
+	m=len(exampleFiles)
+	trianData=zeros((m,1024))
+	hwlabels=[]
+	for i in range(m):
+		f=exampleFiles[i]
+		fname=f.split('.')[0]
+		fname=fname.split('_')[0]
+		hwlabels.append(fname)
+		trianData[i,]=img2vector('%s/%s'%(trianingFile,f))
 	
+	errorCount=0.0
+	testFile='%s/testDigits'%(filepath)
+	testFiles=listdir(testFile)
+	mt=len(testFiles)
+	testData=zeros((mt,1024))
+	for j in range(mt):
+		f=testFiles[j]
+		fname=f.split('.')[0]
+		fname=fname.split('_')[0]
+		unitTestData=img2vector('%s/%s'%(testFile,f))
+		result=kNNTest(unitTestData,trianData,hwlabels,3)
+		print "the classifier came back with: %d, the real answer is: %d"\
+			%(int(result),int(fname))
+		if result!=fname:
+			errorCount+=1.0
+	print "\nthe total number of errors is: %d" % errorCount
+	print "\nthe total error rate is: %f" % (errorCount/float(mt))
+						
