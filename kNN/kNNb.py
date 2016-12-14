@@ -12,11 +12,15 @@ def kNNTest(intX,dataset,labels,k):
 	squre=cha**2
 	su=squre.sum(axis=1)
 	dis=su**0.5
+	#升序排序，返回升序后各元素的索引
 	sortdis=dis.argsort()
+	#print sortdis
 	dd={}
 	for i in range(k):
 		votelabels=labels[sortdis[i]]
+		#print votelabels
 		dd[votelabels]=dd.get(votelabels,0)+1
+		#print dd
 	sortedclasscount=sorted(dd.iteritems(),key=operator.itemgetter(1),reverse=True)
 	return sortedclasscount[0][0]
 		
